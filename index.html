@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RESTORE Audio Demo</title>
+  <meta name="description" content="Audio demo for RESTORE: real-time steerable restoration and bandwidth extension of historical music recordings. Listen and switch between models while the spectrogram plays.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="topnav" aria-label="Sections">
+  <div class="wrap">
+    <a class="brand" href="#top">RESTORE<i>.</i></a>
+    <ul>
+      <li><a href="#overview">Overview</a></li>
+      <li><a href="#hist_vocal">Historical: vocals + music</a></li>
+      <li><a href="#hist_music">Historical: music only</a></li>
+      <li><a href="#synthetic">Synthetic</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="wrap">
+    <span class="eyebrow">Audio demo &middot; ICASSP submission</span>
+    <h1>RESTORE<span>.</span></h1>
+    <p class="expansion"><b>RE</b>al-time <b>S</b>teerable Music res<b>TOR</b>ation and bandwidth <b>E</b>xtension via stem disentanglement</p>
+
+    <!-- TODO: fill in authors and links once they are public -->
+    <p class="byline"><strong>Author(s) Name(s)</strong> &middot; Department of Electrical and Computer Engineering, University of Rochester</p>
+    <div class="pills">
+      <a class="pill primary" href="#hist_vocal">Listen &darr;</a>
+      <span class="pill" aria-disabled="true">Paper <small>soon</small></span>
+      <span class="pill" aria-disabled="true">Code <small>soon</small></span>
+    </div>
+
+  </div>
+</header>
+
+<main>
+  <section class="overview" id="overview">
+    <div class="wrap">
+      <div class="overview-grid">
+        <h2>Overview</h2>
+        <div>
+          <p class="abstract">Restoration of historical recordings is typically framed as a rigid mapping from a degraded input to a single clean output, enforcing irreversible decisions about what counts as damage and inseparably hiding synthesized content within the final mix. Because archival aesthetics are highly subjective, we argue that restoration tools should empower users with interactive control rather than imposing a single predetermined outcome. To achieve this, we introduce RESTORE, a framework that reformulates historical restoration as a six-source semantic decomposition. By expanding a pretrained HTDemucs backbone, a single forward pass disentangles the mixture into vocals, music, broadband hiss, impulsive transients, and an unmodeled residual, while jointly synthesizing a high-frequency extension. Users steer the restoration by simply remixing stem gains, ensuring generative content remains isolated and auditable. Evaluated across diverse genres, RESTORE improves audio quality and FAD over the baselines while delivering genuine aesthetic steerability at 50&times; real time on a single GPU.</p>
+          <ul class="keywords" aria-label="Keywords">
+            <li>Historical music restoration</li>
+            <li>Bandwidth extension</li>
+            <li>Music source separation</li>
+          </ul>
+        </div>
+      </div>
+
+      <figure class="figure">
+        <div class="frame"><img src="assets/figure1.png" width="2290" height="940" alt="RESTORE architecture: a historical mixture goes through an HTDemucs-style cross-domain transformer, whose decoders output vocals, music, broadband hiss, transient clicks, residual and a generative high-frequency extension stem; the stems are summed into the restored waveform."></div>
+        <figcaption><b>Figure 1.</b> One forward pass splits the degraded mixture into content stems (vocals, music), degradation stems (broadband hiss, transient clicks, residual) and a generative high-frequency extension stem. The restored waveform is a remix of these stems.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="guide" aria-label="How to listen">
+    <div class="wrap">
+      <div class="guide-box">
+        <div>
+          <span class="n">01</span>
+          <h3>Press play</h3>
+          <p>Each clip has a spectrogram (0&ndash;22&nbsp;kHz) and one button per system. The spectrogram always shows the system you have selected.</p>
+        </div>
+        <div>
+          <span class="n">02</span>
+          <h3>Switch while it plays</h3>
+          <p>Tap another system and the sound changes at the same moment in the music. Click or drag the spectrogram to jump around.</p>
+        </div>
+        <div>
+          <span class="n">03</span>
+          <h3>Keyboard</h3>
+          <p><kbd>Space</kbd> play / pause &nbsp; <kbd>1</kbd>&ndash;<kbd>9</kbd> pick a system &nbsp; <kbd>&larr;</kbd> <kbd>&rarr;</kbd> skip 5&nbsp;s</p>
+        </div>
+      </div>
+      <p class="guide-foot">Headphones recommended. Within each clip all systems are loudness-matched, so a louder result is never a better one. The RESTORE stems are normalised one by one instead, because a stem like hiss would otherwise be almost inaudible. They are hidden by default; use the &ldquo;RESTORE stems&rdquo; toggle under any clip to show or hide them on every clip.</p>
+    </div>
+  </section>
+
+  <div id="demo"></div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Historical recordings are 78&nbsp;RPM discs from the Great 78 Project (Internet Archive), trimmed to 60&nbsp;s. Synthetic clips are degraded modern recordings.</p>
+    <p>Audio is streamed as 256&nbsp;kbps AAC and played through the Web Audio API so that model switching stays sample-aligned.</p>
+  </div>
+</footer>
+
+<script src="manifest.js"></script>
+<script src="player.js"></script>
+</body>
+</html>

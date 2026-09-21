@@ -1,0 +1,241 @@
+{
+  "models": {
+    "input": {
+      "label": "Input",
+      "note": "The degraded recording, before any processing.",
+      "color": "#8a8378"
+    },
+    "clean": {
+      "label": "Clean reference",
+      "note": "Ground-truth clean mixture (synthetic set only).",
+      "color": "#5b7f6a"
+    },
+    "unet": {
+      "label": "U-Net",
+      "note": "Two-stage U-Net denoiser (Moliner &amp; V&auml;lim&auml;ki, 2022). Suppresses hiss and clicks; does not extend bandwidth.",
+      "color": "#3f6fa6"
+    },
+    "htdemucs": {
+      "label": "HT-Demucs",
+      "note": "Pretrained HT-Demucs (Rouard et al., 2023), the backbone RESTORE is built on, used as an off-the-shelf baseline.",
+      "color": "#2f8f8a"
+    },
+    "izotope": {
+      "label": "iZotope RX",
+      "note": "iZotope RX 12 Advanced with the archival chain: de-click, de-crackle, de-hum, spectral de-noise, spectral recovery.",
+      "color": "#c98a1e"
+    },
+    "babe2": {
+      "label": "BABE-2",
+      "note": "Cascaded baseline: U-Net denoiser followed by the BABE-2 diffusion bandwidth-extension model (Moliner et al., 2024).",
+      "color": "#7a5aa6"
+    },
+    "ours_lp": {
+      "label": "RESTORE (ext. off)",
+      "note": "Ours with the extension stem left out: the same separation and denoising, but no generated high frequencies, so the output stays band-limited.",
+      "color": "#d0705f",
+      "ours": true
+    },
+    "ours": {
+      "label": "RESTORE (ext. on)",
+      "note": "Ours. One forward pass splits the recording into stems; the restored mix is the content stems plus the generative high-frequency extension stem.",
+      "color": "#b4382a",
+      "ours": true
+    },
+    "vocals": {
+      "label": "Vocals",
+      "group": "RESTORE stems",
+      "subgroup": "Content",
+      "color": "#3d8b4b",
+      "level": "solo",
+      "note": "RESTORE's vocal stem on its own: the recovered voice at the recording's surviving bandwidth (before extension). Normalised separately so it is easy to hear."
+    },
+    "music": {
+      "label": "Music",
+      "group": "RESTORE stems",
+      "subgroup": "Content",
+      "color": "#6f9a2f",
+      "level": "solo",
+      "note": "RESTORE's music stem on its own: the accompaniment at the recording's surviving bandwidth (before extension). Normalised separately so it is easy to hear."
+    },
+    "broadband": {
+      "label": "Broadband hiss",
+      "group": "RESTORE stems",
+      "subgroup": "Degradations",
+      "color": "#7a766f",
+      "level": "solo",
+      "note": "The broadband hiss RESTORE separated out and removes. Boosted so it is audible: in the mix it is far quieter."
+    },
+    "transient": {
+      "label": "Transient clicks",
+      "group": "RESTORE stems",
+      "subgroup": "Degradations",
+      "color": "#6b675f",
+      "level": "solo",
+      "note": "The clicks and thumps RESTORE separated out and removes. Boosted so they are audible: in the mix they are far quieter."
+    },
+    "residual": {
+      "label": "Residual",
+      "group": "RESTORE stems",
+      "subgroup": "Degradations",
+      "color": "#948f87",
+      "level": "solo",
+      "note": "The catch-all stem for anything the other stems don't explain. It should stay close to silence. Boosted so it is audible."
+    },
+    "extension": {
+      "label": "HF extension",
+      "group": "RESTORE stems",
+      "subgroup": "Generative",
+      "color": "#b8892a",
+      "level": "solo",
+      "note": "The only synthesized content: the generated high-frequency extension, kept on its own stem so it stays auditable. Adding it to the content stems gives the full-band restoration."
+    }
+  },
+  "synthetic": [
+    {
+      "folder": "synth_test_modern_0003_pass0",
+      "audio": {
+        "input": "0_degraded.wav",
+        "unet": "1_stage1_moliner_norm.wav",
+        "htdemucs": "2_htdemucs_vm_norm.wav",
+        "izotope": "6_izotope_norm.wav",
+        "ours": "5_mix_vme_crossv2_norm.wav",
+        "ours_lp": "3_v4ug_mix_vm_lp_norm.wav",
+        "vocals": "3_v4ug_vocals_lp_norm.wav",
+        "music": "3_v4ug_music_lp_norm.wav",
+        "broadband": "3_v4ug_broadband.wav",
+        "transient": "3_v4ug_transient.wav",
+        "residual": "3_v4ug_residual.wav",
+        "extension": "3_v4ug_extension.wav"
+      }
+    },
+    {
+      "folder": "synth_test_modern_0006_pass0",
+      "audio": {
+        "input": "0_degraded.wav",
+        "unet": "1_stage1_moliner_norm.wav",
+        "htdemucs": "2_htdemucs_vm.wav",
+        "izotope": "6_izotope_norm.wav",
+        "ours": "5_mix_vme_crossv2_norm.wav",
+        "ours_lp": "3_v4ug_mix_vm_lp_norm.wav",
+        "vocals": "3_v4ug_vocals_lp_norm.wav",
+        "music": "3_v4ug_music_lp_norm.wav",
+        "broadband": "3_v4ug_broadband.wav",
+        "transient": "3_v4ug_transient.wav",
+        "residual": "3_v4ug_residual.wav",
+        "extension": "3_v4ug_extension.wav"
+      }
+    },
+    {
+      "folder": "synth_test_modern_0009_pass0",
+      "audio": {
+        "input": "0_degraded.wav",
+        "unet": "1_stage1_moliner_norm.wav",
+        "htdemucs": "2_htdemucs_vm.wav",
+        "izotope": "6_izotope_norm.wav",
+        "ours": "5_mix_vme_crossv2_norm.wav",
+        "ours_lp": "3_v4ug_mix_vm_lp_norm.wav",
+        "vocals": "3_v4ug_vocals_lp_norm.wav",
+        "music": "3_v4ug_music_lp_norm.wav",
+        "broadband": "3_v4ug_broadband.wav",
+        "transient": "3_v4ug_transient.wav",
+        "residual": "3_v4ug_residual.wav",
+        "extension": "3_v4ug_extension.wav"
+      }
+    }
+  ],
+  "hist_music": [
+    {
+      "folder": "hist_ood_jazz_0002",
+      "start": 6,
+      "audio": {
+        "input": "0_degraded.wav",
+        "unet": "1_stage1_moliner_norm.wav",
+        "htdemucs": "2_htdemucs_music_norm.wav",
+        "izotope": "6_izotope_norm.wav",
+        "babe2": "1_stage3_babe2_music_norm.wav",
+        "ours": "5_mix_vme_crossv2_norm.wav",
+        "ours_lp": "3_v4ug_mix_vm_lp_norm.wav",
+        "music": "3_v4ug_music_lp_norm.wav",
+        "broadband": "3_v4ug_broadband.wav",
+        "transient": "3_v4ug_transient.wav",
+        "residual": "3_v4ug_residual.wav",
+        "extension": "3_v4ug_extension.wav"
+      }
+    },
+    {
+      "folder": "hist_ood_military_0002",
+      "start": 5,
+      "audio": {
+        "input": "0_degraded.wav",
+        "unet": "1_stage1_moliner_norm.wav",
+        "htdemucs": "2_htdemucs_music_norm.wav",
+        "izotope": "6_izotope_norm.wav",
+        "babe2": "1_stage3_babe2_music_norm.wav",
+        "ours": "5_mix_vme_crossv2_norm.wav",
+        "ours_lp": "3_v4ug_mix_vm_lp_norm.wav",
+        "music": "3_v4ug_music_lp_norm.wav",
+        "broadband": "3_v4ug_broadband.wav",
+        "transient": "3_v4ug_transient.wav",
+        "residual": "3_v4ug_residual.wav",
+        "extension": "3_v4ug_extension.wav"
+      }
+    },
+    {
+      "folder": "hist_ood_violin_guitar_solo_0001",
+      "start": 3,
+      "audio": {
+        "input": "0_degraded.wav",
+        "unet": "1_stage1_moliner_norm.wav",
+        "htdemucs": "2_htdemucs_music_norm.wav",
+        "izotope": "6_izotope_norm.wav",
+        "babe2": "1_stage3_babe2_music_norm.wav",
+        "ours": "5_mix_vme_crossv2_norm.wav",
+        "ours_lp": "3_v4ug_mix_vm_lp_norm.wav",
+        "music": "3_v4ug_music_lp_norm.wav",
+        "broadband": "3_v4ug_broadband.wav",
+        "transient": "3_v4ug_transient.wav",
+        "residual": "3_v4ug_residual.wav",
+        "extension": "3_v4ug_extension.wav"
+      }
+    }
+  ],
+  "hist_vocal": [
+    {
+      "folder": "hist_ood_flamenco_0001",
+      "start": 4,
+      "audio": {
+        "input": "0_degraded.wav",
+        "unet": "1_stage1_moliner_norm.wav",
+        "htdemucs": "2_htdemucs_vm.wav",
+        "izotope": "6_izotope_norm.wav",
+        "ours": "5_mix_vme_crossv2_norm.wav",
+        "ours_lp": "4_v4co_mix_vm_lp_norm.wav",
+        "vocals": "4_v4co_vocals_lp_norm.wav",
+        "music": "4_v4co_music_lp_norm.wav",
+        "broadband": "4_v4co_broadband.wav",
+        "transient": "4_v4co_transient.wav",
+        "residual": "4_v4co_residual.wav",
+        "extension": "3_v4ug_extension.wav"
+      }
+    },
+    {
+      "folder": "hist_ood_tango_0001",
+      "start": 5,
+      "audio": {
+        "input": "0_degraded.wav",
+        "unet": "1_stage1_moliner_norm.wav",
+        "htdemucs": "2_htdemucs_vm.wav",
+        "izotope": "6_izotope_norm.wav",
+        "ours": "5_mix_vme_crossv2_norm.wav",
+        "ours_lp": "3_v4ug_mix_vm_lp_norm.wav",
+        "vocals": "3_v4ug_vocals_lp_norm.wav",
+        "music": "3_v4ug_music_lp_norm.wav",
+        "broadband": "3_v4ug_broadband.wav",
+        "transient": "3_v4ug_transient.wav",
+        "residual": "3_v4ug_residual.wav",
+        "extension": "3_v4ug_extension.wav"
+      }
+    }
+  ]
+}
