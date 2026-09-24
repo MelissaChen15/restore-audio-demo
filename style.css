@@ -292,6 +292,15 @@ img { display: block; max-width: 100%; }
 .fatal { padding: 48px 0; color: var(--accent); }
 footer { margin-top: 72px; padding: 32px 0 64px; border-top: 1px solid var(--rule); color: var(--ink-3); font-size: 13.5px; }
 footer p { margin: 0 0 6px; max-width: 80ch; }
+.debug-toggle {
+  margin-top: 14px; padding: 5px 10px; border-radius: 999px; cursor: pointer;
+  border: 1px dashed var(--rule); background: none; color: var(--ink-3);
+  font: 500 11px/1 var(--mono); letter-spacing: 0.04em;
+}
+.debug-toggle .state { font-weight: 600; color: var(--ink-2); }
+.debug-toggle:hover { border-color: var(--ink-2); color: var(--ink-2); }
+.debug-toggle[aria-pressed="true"] { border-style: solid; border-color: var(--accent); color: var(--accent); }
+.debug-toggle[aria-pressed="true"] .state { color: var(--accent); }
 
 @keyframes spin { to { transform: rotate(360deg); } }
 @keyframes pulse { 50% { opacity: 0.25; } }

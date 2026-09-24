@@ -2,6 +2,7 @@
 """Build the demo page assets from the clip folders in SRC.
 
     python3 build.py            # build everything (takes ~10 s per 10 clips)
+    python3 build.py --only synth_test_modern_0009_pass0   # only re-encode these clips' audio
     python3 build.py --auto     # (re)generate config.json from every clip folder found in SRC
 
 config.json is the one file you edit:
@@ -14,6 +15,11 @@ config.json is the one file you edit:
 
 For every clip, build.py level-matches the files (see TARGET_LUFS), transcodes them to AAC (.m4a),
 renders a spectrogram (.jpg) into assets/<folder>/ and writes manifest.js, which the page renders.
+
+`--only` re-encodes just the named clip folder(s) -- useful after replacing a clip's source wav(s)
+without touching the rest. manifest.js is still rewritten in full; other clips' existing assets are
+left alone (not re-encoded, not deleted).
+
 Only needs ffmpeg + ffprobe on PATH. No Python packages.
 """
 import argparse
@@ -49,6 +55,7 @@ PEAK_CEIL_DB = -1.0
 #                     the clip. Needed for stems: they are 15-35 dB quieter than a mix, so matching them
 #                     to the mix would either barely lift them or drag the whole clip down.
 #   groups=[...]      (--auto only) page groups whose clips get this model
+#   debug=True        only shown on the page when the viewer has turned on "Debug mode" (footer)
 # --------------------------------------------------------------------------------------
 DEFAULT_MODELS = {
     "input": dict(
@@ -161,6 +168,75 @@ DEFAULT_MODELS = {
         groups=["synthetic", "hist_vocal", "hist_music"],  # --auto only maps it to clips in these page groups
         note='The only synthesized content: the generated high-frequency extension, kept on its own stem so it stays auditable. Adding it to the content stems gives the full-band restoration.',
         files=["3_v4ug_extension.wav"],
+    ),
+    # Clean target stems -- only exist for the synthetic set, where the clean pre-degradation mix is
+    # known. Same colour per stem as its "RESTORE stems" counterpart (same category, different source);
+    # a different `group` puts them in their own collapsible row, right below "RESTORE stems".
+    "clean_vocals": dict(
+        label='Vocals',
+        group="Clean target stems",
+        debug=True,  # only shown on the page when Debug mode is on
+        subgroup='Content',
+        color="#3d8b4b",
+        level="solo",
+        groups=["synthetic"],
+        note="The clean vocal stem before degradation: the target RESTORE's vocal stem is trying to recover.",
+        files=["clean_vocals_norm.wav"],
+    ),
+    "clean_music": dict(
+        label='Music',
+        group="Clean target stems",
+        debug=True,  # only shown on the page when Debug mode is on
+        subgroup='Content',
+        color="#6f9a2f",
+        level="solo",
+        groups=["synthetic"],
+        note="The clean music stem before degradation: the target RESTORE's music stem is trying to recover.",
+        files=["clean_music_norm.wav"],
+    ),
+    "clean_broadband": dict(
+        label='Broadband hiss',
+        group="Clean target stems",
+        debug=True,  # only shown on the page when Debug mode is on
+        subgroup='Degradations',
+        color="#7a766f",
+        level="solo",
+        groups=["synthetic"],
+        note='The broadband hiss actually injected by the simulated degradation, i.e. the ground truth for the broadband stem.',
+        files=["clean_broadband.wav"],
+    ),
+    "clean_transient": dict(
+        label='Transient clicks',
+        group="Clean target stems",
+        debug=True,  # only shown on the page when Debug mode is on
+        subgroup='Degradations',
+        color="#6b675f",
+        level="solo",
+        groups=["synthetic"],
+        note='The clicks and thumps actually injected by the simulated degradation, i.e. the ground truth for the transient stem.',
+        files=["clean_transient.wav"],
+    ),
+    "clean_residual": dict(
+        label='Residual',
+        group="Clean target stems",
+        debug=True,  # only shown on the page when Debug mode is on
+        subgroup='Degradations',
+        color="#948f87",
+        level="solo",
+        groups=["synthetic"],
+        note='The ground truth for the residual stem: whatever the simulated degradation added that the other stems do not account for.',
+        files=["clean_residual.wav"],
+    ),
+    "clean_extension": dict(
+        label='HF extension',
+        group="Clean target stems",
+        debug=True,  # only shown on the page when Debug mode is on
+        subgroup='Generative',
+        color="#b8892a",
+        level="solo",
+        groups=["synthetic"],
+        note='The high-frequency content actually removed by the simulated band-limiting, i.e. the ground truth for the extension stem.',
+        files=["clean_extension.wav"],
     ),
 }
 
@@ -311,7 +387,10 @@ def process(src: Path, out_audio: Path, out_spec: Path, gain_db: float, start: f
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--auto", action="store_true", help="regenerate config.json from all clip folders found in SRC")
+    ap.add_argument("--only", metavar="FOLDER[,FOLDER...]",
+                     help="only re-encode audio/spectrograms for these clip folders; other clips' assets are left untouched")
     args = ap.parse_args()
+    only = {f.strip() for f in args.only.split(",")} if args.only else None
 
     if args.auto or not CONFIG.exists():
         CONFIG.write_text(json.dumps(auto_config(), indent=2) + "\n")
@@ -370,12 +449,21 @@ def main():
             groups.append({**grp, "items": items})
         manifest_sections.append({**sec, "groups": groups})
 
-    files = [j for js in jobs.values() for j in js]
+    if only is not None:
+        unknown = only - set(jobs)
+        if unknown:
+            sys.exit(f"--only: no such clip(s) in config.json: {', '.join(sorted(unknown))}")
+        skipped = len(jobs) - len(only)
+        if skipped:
+            print(f"--only: re-encoding {', '.join(sorted(only))}; leaving {skipped} other clip(s) untouched")
+    todo = {folder: js for folder, js in jobs.items() if only is None or folder in only}
+
+    files = [j for js in todo.values() for j in js]
     print(f"processing {len(files)} files ...")
     with ThreadPoolExecutor(max_workers=6) as pool:
         levels = dict(zip((j[0] for j in files), pool.map(lambda j: measure(j[0], j[4]), files)))
         futures = []
-        for folder, js in jobs.items():
+        for folder, js in todo.items():
             # models of a clip share one loudness; "solo" files (stems) are matched individually
             shared = [levels[src] for src, _, _, solo, _ in js if not solo]
             target = min([TARGET_LUFS] + [l + PEAK_CEIL_DB - pk for l, pk in shared])
@@ -388,8 +476,12 @@ def main():
         for f in futures:
             f.result()
 
-    # remove generated output that config.json no longer refers to (unused clips / models)
+    # remove generated output that config.json no longer refers to (unused clips / models).
+    # Skipped with --only: a clip left untouched this run must keep exactly the assets it already
+    # has, even if some of them wouldn't match a fresh build (e.g. config.json changed for it too).
     for d in sorted(p for p in ASSETS.iterdir() if p.is_dir()):
+        if only is not None and d.name not in only:
+            continue
         if d.name not in jobs:
             shutil.rmtree(d)
             print(f"  removed stale assets/{d.name}")

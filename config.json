@@ -89,6 +89,60 @@
       "color": "#b8892a",
       "level": "solo",
       "note": "The only synthesized content: the generated high-frequency extension, kept on its own stem so it stays auditable. Adding it to the content stems gives the full-band restoration."
+    },
+    "clean_vocals": {
+      "label": "Vocals",
+      "group": "Clean target stems",
+      "subgroup": "Content",
+      "color": "#3d8b4b",
+      "note": "The clean vocal stem before degradation: the target RESTORE's vocal stem is trying to recover.",
+      "level": "solo",
+      "debug": true
+    },
+    "clean_music": {
+      "label": "Music",
+      "group": "Clean target stems",
+      "subgroup": "Content",
+      "color": "#6f9a2f",
+      "note": "The clean music stem before degradation: the target RESTORE's music stem is trying to recover.",
+      "level": "solo",
+      "debug": true
+    },
+    "clean_broadband": {
+      "label": "Broadband hiss",
+      "group": "Clean target stems",
+      "subgroup": "Degradations",
+      "color": "#7a766f",
+      "note": "The broadband hiss actually injected by the simulated degradation, i.e. the ground truth for the broadband stem.",
+      "level": "solo",
+      "debug": true
+    },
+    "clean_transient": {
+      "label": "Transient clicks",
+      "group": "Clean target stems",
+      "subgroup": "Degradations",
+      "color": "#6b675f",
+      "note": "The clicks and thumps actually injected by the simulated degradation, i.e. the ground truth for the transient stem.",
+      "level": "solo",
+      "debug": true
+    },
+    "clean_residual": {
+      "label": "Residual",
+      "group": "Clean target stems",
+      "subgroup": "Degradations",
+      "color": "#948f87",
+      "note": "The ground truth for the residual stem: whatever the simulated degradation added that the other stems do not account for.",
+      "level": "solo",
+      "debug": true
+    },
+    "clean_extension": {
+      "label": "HF extension",
+      "group": "Clean target stems",
+      "subgroup": "Generative",
+      "color": "#b8892a",
+      "note": "The high-frequency content actually removed by the simulated band-limiting, i.e. the ground truth for the extension stem.",
+      "level": "solo",
+      "debug": true
     }
   },
   "synthetic": [
@@ -106,7 +160,13 @@
         "broadband": "3_v4ug_broadband.wav",
         "transient": "3_v4ug_transient.wav",
         "residual": "3_v4ug_residual.wav",
-        "extension": "3_v4ug_extension.wav"
+        "extension": "3_v4ug_extension.wav",
+        "clean_vocals": "clean_vocals_norm.wav",
+        "clean_music": "clean_music_norm.wav",
+        "clean_broadband": "clean_broadband.wav",
+        "clean_transient": "clean_transient.wav",
+        "clean_residual": "clean_residual.wav",
+        "clean_extension": "clean_extension.wav"
       }
     },
     {
@@ -123,7 +183,13 @@
         "broadband": "3_v4ug_broadband.wav",
         "transient": "3_v4ug_transient.wav",
         "residual": "3_v4ug_residual.wav",
-        "extension": "3_v4ug_extension.wav"
+        "extension": "3_v4ug_extension.wav",
+        "clean_vocals": "clean_vocals_norm.wav",
+        "clean_music": "clean_music_norm.wav",
+        "clean_broadband": "clean_broadband.wav",
+        "clean_transient": "clean_transient.wav",
+        "clean_residual": "clean_residual.wav",
+        "clean_extension": "clean_extension.wav"
       }
     },
     {
@@ -131,7 +197,7 @@
       "audio": {
         "input": "0_degraded.wav",
         "unet": "1_stage1_moliner_norm.wav",
-        "htdemucs": "2_htdemucs_vm.wav",
+        "htdemucs": "2_htdemucs_vm_norm.wav",
         "izotope": "6_izotope_norm.wav",
         "ours": "5_mix_vme_crossv2_norm.wav",
         "ours_lp": "3_v4ug_mix_vm_lp_norm.wav",
@@ -140,7 +206,13 @@
         "broadband": "3_v4ug_broadband.wav",
         "transient": "3_v4ug_transient.wav",
         "residual": "3_v4ug_residual.wav",
-        "extension": "3_v4ug_extension.wav"
+        "extension": "3_v4ug_extension.wav",
+        "clean_vocals": "clean_vocals_norm.wav",
+        "clean_music": "clean_music_norm.wav",
+        "clean_broadband": "clean_broadband.wav",
+        "clean_transient": "clean_transient.wav",
+        "clean_residual": "clean_residual.wav",
+        "clean_extension": "clean_extension.wav"
       }
     }
   ],

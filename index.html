@@ -30,12 +30,12 @@
     <h1>RESTORE<span>.</span></h1>
     <p class="expansion"><b>RE</b>al-time <b>S</b>teerable Music res<b>TOR</b>ation and bandwidth <b>E</b>xtension via stem disentanglement</p>
 
-    <!-- TODO: fill in authors and links once they are public -->
-    <p class="byline"><strong>Author(s) Name(s)</strong> &middot; Department of Electrical and Computer Engineering, University of Rochester</p>
+    <!-- TODO: fill in the paper link once it is public -->
+    <p class="byline"><strong>Meiying Chen, Benjamin R. Thompson and Michael C. Heilemann</strong> &middot; Department of Electrical and Computer Engineering, University of Rochester</p>
     <div class="pills">
       <a class="pill primary" href="#hist_vocal">Listen &darr;</a>
       <span class="pill" aria-disabled="true">Paper <small>soon</small></span>
-      <span class="pill" aria-disabled="true">Code <small>soon</small></span>
+      <a class="pill" href="https://github.com/MelissaChen15/restore">Code</a>
     </div>
 
   </div>
@@ -93,6 +93,7 @@
   <div class="wrap">
     <p>Historical recordings are 78&nbsp;RPM discs from the Great 78 Project (Internet Archive), trimmed to 60&nbsp;s. Synthetic clips are degraded modern recordings.</p>
     <p>Audio is streamed as 256&nbsp;kbps AAC and played through the Web Audio API so that model switching stays sample-aligned.</p>
+    <button id="debug-toggle" class="debug-toggle" type="button" aria-pressed="false">Debug mode: <span class="state">off</span></button>
   </div>
 </footer>
 

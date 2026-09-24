@@ -89,6 +89,60 @@ window.DEMO = {
       "color": "#b8892a",
       "level": "solo",
       "note": "The only synthesized content: the generated high-frequency extension, kept on its own stem so it stays auditable. Adding it to the content stems gives the full-band restoration."
+    },
+    "clean_vocals": {
+      "label": "Vocals",
+      "group": "Clean target stems",
+      "subgroup": "Content",
+      "color": "#3d8b4b",
+      "note": "The clean vocal stem before degradation: the target RESTORE's vocal stem is trying to recover.",
+      "level": "solo",
+      "debug": true
+    },
+    "clean_music": {
+      "label": "Music",
+      "group": "Clean target stems",
+      "subgroup": "Content",
+      "color": "#6f9a2f",
+      "note": "The clean music stem before degradation: the target RESTORE's music stem is trying to recover.",
+      "level": "solo",
+      "debug": true
+    },
+    "clean_broadband": {
+      "label": "Broadband hiss",
+      "group": "Clean target stems",
+      "subgroup": "Degradations",
+      "color": "#7a766f",
+      "note": "The broadband hiss actually injected by the simulated degradation, i.e. the ground truth for the broadband stem.",
+      "level": "solo",
+      "debug": true
+    },
+    "clean_transient": {
+      "label": "Transient clicks",
+      "group": "Clean target stems",
+      "subgroup": "Degradations",
+      "color": "#6b675f",
+      "note": "The clicks and thumps actually injected by the simulated degradation, i.e. the ground truth for the transient stem.",
+      "level": "solo",
+      "debug": true
+    },
+    "clean_residual": {
+      "label": "Residual",
+      "group": "Clean target stems",
+      "subgroup": "Degradations",
+      "color": "#948f87",
+      "note": "The ground truth for the residual stem: whatever the simulated degradation added that the other stems do not account for.",
+      "level": "solo",
+      "debug": true
+    },
+    "clean_extension": {
+      "label": "HF extension",
+      "group": "Clean target stems",
+      "subgroup": "Generative",
+      "color": "#b8892a",
+      "note": "The high-frequency content actually removed by the simulated band-limiting, i.e. the ground truth for the extension stem.",
+      "level": "solo",
+      "debug": true
     }
   },
   "sections": [
@@ -522,6 +576,36 @@ window.DEMO = {
                   "id": "extension",
                   "audio": "assets/synth_test_modern_0003_pass0/extension.m4a",
                   "spec": "assets/synth_test_modern_0003_pass0/extension.jpg"
+                },
+                {
+                  "id": "clean_vocals",
+                  "audio": "assets/synth_test_modern_0003_pass0/clean_vocals.m4a",
+                  "spec": "assets/synth_test_modern_0003_pass0/clean_vocals.jpg"
+                },
+                {
+                  "id": "clean_music",
+                  "audio": "assets/synth_test_modern_0003_pass0/clean_music.m4a",
+                  "spec": "assets/synth_test_modern_0003_pass0/clean_music.jpg"
+                },
+                {
+                  "id": "clean_broadband",
+                  "audio": "assets/synth_test_modern_0003_pass0/clean_broadband.m4a",
+                  "spec": "assets/synth_test_modern_0003_pass0/clean_broadband.jpg"
+                },
+                {
+                  "id": "clean_transient",
+                  "audio": "assets/synth_test_modern_0003_pass0/clean_transient.m4a",
+                  "spec": "assets/synth_test_modern_0003_pass0/clean_transient.jpg"
+                },
+                {
+                  "id": "clean_residual",
+                  "audio": "assets/synth_test_modern_0003_pass0/clean_residual.m4a",
+                  "spec": "assets/synth_test_modern_0003_pass0/clean_residual.jpg"
+                },
+                {
+                  "id": "clean_extension",
+                  "audio": "assets/synth_test_modern_0003_pass0/clean_extension.m4a",
+                  "spec": "assets/synth_test_modern_0003_pass0/clean_extension.jpg"
                 }
               ]
             },
@@ -589,6 +673,36 @@ window.DEMO = {
                   "id": "extension",
                   "audio": "assets/synth_test_modern_0006_pass0/extension.m4a",
                   "spec": "assets/synth_test_modern_0006_pass0/extension.jpg"
+                },
+                {
+                  "id": "clean_vocals",
+                  "audio": "assets/synth_test_modern_0006_pass0/clean_vocals.m4a",
+                  "spec": "assets/synth_test_modern_0006_pass0/clean_vocals.jpg"
+                },
+                {
+                  "id": "clean_music",
+                  "audio": "assets/synth_test_modern_0006_pass0/clean_music.m4a",
+                  "spec": "assets/synth_test_modern_0006_pass0/clean_music.jpg"
+                },
+                {
+                  "id": "clean_broadband",
+                  "audio": "assets/synth_test_modern_0006_pass0/clean_broadband.m4a",
+                  "spec": "assets/synth_test_modern_0006_pass0/clean_broadband.jpg"
+                },
+                {
+                  "id": "clean_transient",
+                  "audio": "assets/synth_test_modern_0006_pass0/clean_transient.m4a",
+                  "spec": "assets/synth_test_modern_0006_pass0/clean_transient.jpg"
+                },
+                {
+                  "id": "clean_residual",
+                  "audio": "assets/synth_test_modern_0006_pass0/clean_residual.m4a",
+                  "spec": "assets/synth_test_modern_0006_pass0/clean_residual.jpg"
+                },
+                {
+                  "id": "clean_extension",
+                  "audio": "assets/synth_test_modern_0006_pass0/clean_extension.m4a",
+                  "spec": "assets/synth_test_modern_0006_pass0/clean_extension.jpg"
                 }
               ]
             },
@@ -656,6 +770,36 @@ window.DEMO = {
                   "id": "extension",
                   "audio": "assets/synth_test_modern_0009_pass0/extension.m4a",
                   "spec": "assets/synth_test_modern_0009_pass0/extension.jpg"
+                },
+                {
+                  "id": "clean_vocals",
+                  "audio": "assets/synth_test_modern_0009_pass0/clean_vocals.m4a",
+                  "spec": "assets/synth_test_modern_0009_pass0/clean_vocals.jpg"
+                },
+                {
+                  "id": "clean_music",
+                  "audio": "assets/synth_test_modern_0009_pass0/clean_music.m4a",
+                  "spec": "assets/synth_test_modern_0009_pass0/clean_music.jpg"
+                },
+                {
+                  "id": "clean_broadband",
+                  "audio": "assets/synth_test_modern_0009_pass0/clean_broadband.m4a",
+                  "spec": "assets/synth_test_modern_0009_pass0/clean_broadband.jpg"
+                },
+                {
+                  "id": "clean_transient",
+                  "audio": "assets/synth_test_modern_0009_pass0/clean_transient.m4a",
+                  "spec": "assets/synth_test_modern_0009_pass0/clean_transient.jpg"
+                },
+                {
+                  "id": "clean_residual",
+                  "audio": "assets/synth_test_modern_0009_pass0/clean_residual.m4a",
+                  "spec": "assets/synth_test_modern_0009_pass0/clean_residual.jpg"
+                },
+                {
+                  "id": "clean_extension",
+                  "audio": "assets/synth_test_modern_0009_pass0/clean_extension.m4a",
+                  "spec": "assets/synth_test_modern_0009_pass0/clean_extension.jpg"
                 }
               ]
             }

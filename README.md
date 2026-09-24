@@ -65,17 +65,25 @@ uses. You never convert audio yourself.
 in `SRC` (**this overwrites your edits**). `SRC` (the folder with the source wavs) is set at the
 top of `build.py`.
 
-## Grouping models (e.g. the RESTORE stems)
+## Grouping models (e.g. the RESTORE stems, or the synthetic set's clean target stems)
 
 Optional fields on a model in `config.json`:
 
-- `"group": "RESTORE stems"` puts the model in its own second row under a toggle. Rows with a `group`
-  can be shown or hidden by the viewer (one switch for the whole page, remembered in the browser;
-  hidden by default, change `STEMS_OPEN_DEFAULT` at the top of `player.js`). Models with no group
-  always show.
-- `"subgroup": "Content"` adds a small label in front of a cluster of buttons within that row.
+- `"group": "RESTORE stems"` puts the model in its own row under a toggle. A clip can have several
+  grouped rows (e.g. "RESTORE stems" and, for the synthetic clips, "Clean target stems" right below
+  it) -- rows are consecutive models that share the same `group`, so keep a group's models together
+  in `audio`. Each *group label* has its own show/hide switch, shared by every clip that has that
+  group and remembered in the browser once the viewer touches it (before that, a label open by
+  default lists it in `GROUPS_OPEN_BY_DEFAULT` -- currently just "RESTORE stems" -- at the top of
+  `player.js`; anything else starts closed). Models with no group always show.
+- `"subgroup": "Content"` adds a small label in front of a cluster of buttons within a row.
 - `"level": "solo"` matches the file's loudness on its own instead of together with the other models
   of the clip. Use it for stems: they are 15-35 dB quieter than a mix.
+- `"debug": true` keeps the model off the page entirely (no button, on no clip) until the viewer turns
+  on the **Debug mode** switch in the footer (off by default; change `debugOn`'s initial value at the
+  top of `player.js`). Used for the synthetic set's "Clean target stems" -- the ground truth the
+  RESTORE stems are trying to recover, useful to a developer but not something a general viewer
+  needs. Toggling the switch reloads the page.
 
 Grouped models are only decoded when you hover or select them, to keep memory down.
 

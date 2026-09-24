@@ -69,17 +69,31 @@
   const decodedCards = [];
   const allCards = [];
 
-  // Rows that have a `group` label (the RESTORE stems) can be collapsed so the page can focus on the
-  // comparison of the final systems. One switch for the whole page, remembered between visits.
-  const STEMS_OPEN_DEFAULT = false;
-  const STEMS_KEY = 'restore-demo-stems-open';
-  let stemsOpen = STEMS_OPEN_DEFAULT;
-  try { const v = localStorage.getItem(STEMS_KEY); if (v !== null) stemsOpen = v === '1'; } catch (_) { /* storage blocked */ }
-  const setStemsOpen = (open) => {
-    stemsOpen = open;
-    try { localStorage.setItem(STEMS_KEY, open ? '1' : '0'); } catch (_) { /* ignore */ }
-    allCards.forEach((c) => c.applyStems());
+  // Rows that have a `group` label (e.g. "RESTORE stems", "Clean target stems") can each be collapsed
+  // independently, so the page can focus on the final-system comparison. One switch per group label,
+  // shared by every clip that has that group, remembered between visits.
+  const GROUPS_OPEN_DEFAULT = false;
+  const GROUPS_OPEN_BY_DEFAULT = new Set(['RESTORE stems']); // open on first visit; everything else starts closed
+  const GROUPS_KEY = 'restore-demo-open-groups';
+  let openGroups = {};
+  try {
+    const saved = JSON.parse(localStorage.getItem(GROUPS_KEY));
+    if (saved && typeof saved === 'object') openGroups = saved;
+  } catch (_) { /* storage blocked, or nothing saved yet */ }
+  const isGroupOpen = (label) => (label in openGroups ? openGroups[label] : GROUPS_OPEN_BY_DEFAULT.has(label) || GROUPS_OPEN_DEFAULT);
+  const setGroupOpen = (label, open) => {
+    openGroups[label] = open;
+    try { localStorage.setItem(GROUPS_KEY, JSON.stringify(openGroups)); } catch (_) { /* ignore */ }
+    allCards.forEach((c) => c.applyGroups());
   };
+
+  // Models flagged `debug: true` in the manifest (the synthetic set's clean target stems) exist only
+  // to check RESTORE's stems against the ground truth, so they're kept off the page by default and
+  // only appear once "Debug mode" (in the footer) is turned on. Read once at load; toggling it reloads
+  // the page, which is simplest and avoids rebuilding every card's DOM in place.
+  const DEBUG_KEY = 'restore-demo-debug-mode';
+  let debugOn = false;
+  try { debugOn = localStorage.getItem(DEBUG_KEY) === '1'; } catch (_) { /* storage blocked */ }
 
   // ------------------------------------------------------------------ card
   class Card {
@@ -88,7 +102,9 @@
     constructor(item) {
       this.item = item;
       this.dur = item.duration;
-      this.models = item.models.map((m) => ({ ...DEMO.models[m.id], ...m, buf: null, p: null, bytes: null }));
+      this.models = item.models
+        .map((m) => ({ ...DEMO.models[m.id], ...m, buf: null, p: null, bytes: null }))
+        .filter((m) => !m.debug || debugOn);
       this.byId = Object.fromEntries(this.models.map((m) => [m.id, m]));
       this.active = this.models[0].id;   // model the user has selected
       this.state = 'paused';             // 'paused' | 'loading' | 'playing'
@@ -100,8 +116,7 @@
       this.dragPos = 0;
       this.gen = 0;
       this.lastSec = -1;
-      this.toggles = [];                 // stem-row toggle buttons
-      this.bodies = [];                  // collapsible button containers
+      this.groupRows = [];                // [{ label, toggle, body }] for each collapsible row
       allCards.push(this);
       this.el = this.build();
       this.el.__card = this;
@@ -176,14 +191,14 @@
           h('div', { class: 'msub', role: sub.label ? 'group' : null, 'aria-label': sub.label || null },
             sub.label ? h('span', { class: 'msub-label' }, sub.label) : null, sub.items)));
         if (!collapsible) return h('div', { class: 'mrow', role: 'group', 'aria-label': 'Systems' }, body);
+        const open = isGroupOpen(row.label);
         const toggle = h('button', {
-          class: 'mrow-toggle', type: 'button', 'aria-expanded': String(stemsOpen),
-          onclick: (e) => { setStemsOpen(!stemsOpen); if (e.detail > 0) e.currentTarget.blur(); },
+          class: 'mrow-toggle', type: 'button', 'aria-expanded': String(open),
+          onclick: (e) => { setGroupOpen(row.label, !isGroupOpen(row.label)); if (e.detail > 0) e.currentTarget.blur(); },
         }, h('i', { class: 'chev', 'aria-hidden': 'true' }), h('span', { class: 'lbl' }, row.label),
-        h('span', { class: 'count' }, String(n)), h('span', { class: 'act' }, stemsOpen ? 'Hide' : 'Show'));
-        body.hidden = !stemsOpen;
-        this.toggles.push(toggle);
-        this.bodies.push(body);
+        h('span', { class: 'count' }, String(n)), h('span', { class: 'act' }, open ? 'Hide' : 'Show'));
+        body.hidden = !open;
+        this.groupRows.push({ label: row.label, toggle, body });
         return h('div', { class: 'mrow', role: 'group', 'aria-label': row.label }, toggle, body);
       }));
 
@@ -277,14 +292,15 @@
       }
     }
 
-    isHidden(m) { return !!m.group && !stemsOpen; }
+    isHidden(m) { return !!m.group && !isGroupOpen(m.group); }
 
-    applyStems() {
-      for (const t of this.toggles) {
-        t.setAttribute('aria-expanded', String(stemsOpen));
-        t.querySelector('.act').textContent = stemsOpen ? 'Hide' : 'Show';
+    applyGroups() {
+      for (const { label, toggle, body } of this.groupRows) {
+        const open = isGroupOpen(label);
+        toggle.setAttribute('aria-expanded', String(open));
+        toggle.querySelector('.act').textContent = open ? 'Hide' : 'Show';
+        body.hidden = !open;
       }
-      for (const b of this.bodies) b.hidden = !stemsOpen;
       // a stem can't stay selected (or sounding) once its button is hidden: go back to the final system
       if (this.isHidden(this.byId[this.active])) {
         const back = this.models.find((m) => m.ours) || this.models.find((m) => !m.group);
@@ -535,5 +551,16 @@
     const b = h('div', { class: 'banner', role: 'note', html:
       'Audio can’t load from a <code>file://</code> page. Run <code>python3 -m http.server 8000</code> in this folder and open <code>http://localhost:8000</code>.' });
     document.querySelector('.guide .wrap').prepend(b);
+  }
+
+  // ------------------------------------------------------------------ debug mode
+  const debugBtn = document.getElementById('debug-toggle');
+  if (debugBtn) {
+    debugBtn.setAttribute('aria-pressed', String(debugOn));
+    debugBtn.querySelector('.state').textContent = debugOn ? 'on' : 'off';
+    debugBtn.addEventListener('click', () => {
+      try { localStorage.setItem(DEBUG_KEY, debugOn ? '0' : '1'); } catch (_) { /* ignore */ }
+      location.reload(); // simplest way to add/remove the clean-target-stem rows on every card
+    });
   }
 })();
